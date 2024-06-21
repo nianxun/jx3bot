@@ -1,5 +1,6 @@
 package jx3api.api.ws.action;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jx3api.api.ws.IWsDataPushService;
 import jx3api.api.ws.data.BaseWsData;
@@ -20,7 +21,7 @@ public class WsActionHandler {
     /**
      * 需要接入方实现的数据推送接口
      */
-    private IWsDataPushService wsDataPushService;
+    private final IWsDataPushService wsDataPushService;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     public WsActionHandler(IWsDataPushService wsDataPushService) {
@@ -46,7 +47,8 @@ public class WsActionHandler {
     private BaseWsData transferDataFromBase(TextMessage textMessage) {
         Map<String, Object> wsOriginalData = null;
         try {
-            wsOriginalData = objectMapper.readValue(textMessage.getPayload(), Map.class);
+            wsOriginalData = objectMapper.readValue(textMessage.getPayload(), new TypeReference<>() {
+            });
         } catch (Exception e) {
             logger.error("序列化ws原始数据失败，原始数据=>[{}]", textMessage.getPayload(), e);
         }

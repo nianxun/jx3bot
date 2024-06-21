@@ -30,6 +30,7 @@ public class WsActionDataManager {
     /**
      * 初始化
      */
+    @SuppressWarnings("unchecked")
     public void init(List<String> scanBasePackage) throws ClassNotFoundException,
             NoSuchMethodException,
             InvocationTargetException, InstantiationException, IllegalAccessException {
@@ -48,7 +49,7 @@ public class WsActionDataManager {
             AnnotationMetadata annotationMetadata = annotatedBeanDefinition.getMetadata();
             Map<String, Object> annotationAttributes = annotationMetadata.getAnnotationAttributes(WsActionData.class.getName());
             Object newInstance = Class.forName(componentName).getDeclaredConstructor().newInstance();
-            if (newInstance instanceof BaseWsData) {
+            if (newInstance instanceof BaseWsData && annotationAttributes != null) {
                 ACTION_DATA_MAP.put((int) annotationAttributes.get("actionCode"), (Class<BaseWsData>) newInstance.getClass());
             }
         }
