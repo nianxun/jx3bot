@@ -1,0 +1,56 @@
+server:
+  port: 2333
+spring:
+  application:
+    name: jx3bot
+  profiles:
+    active: dev
+  config:
+    import: classpath:config/api.yml
+#mybatis
+mybatis-plus:
+  global-config:
+    banner: false
+    db-config:
+      logic-delete-field: delFlag # 全局逻辑删除的实体字段名(since 3.3.0,配置后可以忽略不配置步骤2)
+      logic-delete-value: 1 # 逻辑已删除值(默认为 1)
+      logic-not-delete-value: 0 # 逻辑未删除值(默认为 0)
+  configuration:
+    map-underscore-to-camel-case: true
+    cache-enabled: false
+logging:
+  level:
+    uk.zwfield: debug
+    org.springframework: warn
+shiro:
+  # 拦截器
+  interceptor: uk.zwfield.jx3bot.interceptor.BotInterceptor
+  # WebSocket 配置
+  ws:
+    # 访问密钥，强烈推荐在公网的服务器设置
+    access-token: ""
+    # 超时回收，默认10秒
+    timeout: 10
+    # 最大文本消息缓冲区
+    max-text-message-buffer-size: 512000
+    # 二进制消息的最大长度
+    max-binary-message-buffer-size: 512000
+    server:
+      # 是否启用
+      enable: true
+      # 反向 Websocket 连接地址，无需该配置字段可删除，将使用默认值 "/ws/shiro"
+      url: "/onebot/v11/ws"
+      # 最大空闲时间，超过这个时间将关闭会话
+      max-session-idle-timeout: 900000
+  # 线程池配置
+  task-pool:
+    # 核心线程数（默认线程数）
+    core-pool-size: 10
+    # 缓冲队列大小
+    queue-capacity: 200
+    # 允许线程空闲时间（单位：默认为秒）
+    keep-alive-time: 10
+    # 最大线程数
+    max-pool-size: 30
+    # 线程池名前缀
+    thread-name-prefix: "ShiroTaskPool-"

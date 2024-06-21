@@ -1,0 +1,5 @@
+spring:
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driverClassName: org.sqlite.JDBC
+    url: jdbc:sqlite:jx3-bot-service/src/main/resources/db/bot.sqlite

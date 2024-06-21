@@ -1,0 +1,2 @@
+rootProject.name = 'jx3bot'
+include 'jx3-bot-service', 'jx3-api'

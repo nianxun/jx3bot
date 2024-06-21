@@ -1,0 +1,9 @@
+jx3api:
+  ws:
+    ws-url: wss://socket.nicemoe.cn
+    ws-token:
+    re-connect-max-times:
+  api:
+    api-url: https://www.jx3api.com
+    api-token:
+    ticket:

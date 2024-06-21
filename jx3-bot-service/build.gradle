@@ -1,0 +1,29 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot'
+    id 'io.spring.dependency-management'
+}
+
+group = 'uk.zwfield'
+version = '0.0.1-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation project(':jx3-api')
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+    implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3'
+    implementation 'com.github.ben-manes.caffeine:caffeine'
+    implementation 'com.baomidou:mybatis-plus-boot-starter:3.5.7'
+    implementation 'com.baomidou:mybatis-plus-generator:3.5.7'
+    implementation 'org.freemarker:freemarker:2.3.31'
+    implementation 'org.xerial:sqlite-jdbc:3.46.0.0'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    implementation 'com.mikuac:shiro:2.2.8'
+    implementation 'cn.hutool:hutool-all:5.8.28'
+}
