@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'uk.zwfield'
-version = '0.0.1-SNAPSHOT'
+version = '0.0.1'
 
 repositories {
     mavenCentral()
@@ -26,4 +26,8 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok'
     implementation 'com.mikuac:shiro:2.2.8'
     implementation 'cn.hutool:hutool-all:5.8.28'
+}
+
+bootJar {
+    archiveFileName = 'jx3-bot.jar'
 }
