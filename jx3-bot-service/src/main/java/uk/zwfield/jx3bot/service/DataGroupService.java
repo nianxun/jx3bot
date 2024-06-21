@@ -20,6 +20,8 @@ public class DataGroupService extends ServiceImpl<DataGroupMapper, DataGroup> {
     }
 
     public List<DataGroup> getListByAction(Integer action) {
-        return baseMapper.selectList(new QueryWrapper<DataGroup>().like("bot_switch", "," + action + ","));
+        return baseMapper.selectList(new QueryWrapper<DataGroup>()
+                .like("bot_switch", "," + action)
+                .or().like("bot_switch", action + ","));
     }
 }

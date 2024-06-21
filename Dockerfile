@@ -1,12 +1,12 @@
-FROM mdsol/java21-jdk:latest
+FROM do.nark.eu.org/mdsol/java21-jdk:latest
 LABEL authors="field"
 WORKDIR /home/bot
 EXPOSE 2333
 VOLUME logs
 VOLUME db
-COPY jx3-bot.jar jx3-bot.jar
-COPY bot.sqlite db/bot.sqlite
-COPY config config
+COPY jx3-bot-service/build/libs/jx3-bot.jar jx3-bot.jar
+COPY db/bot.sqlite db/bot.sqlite
+COPY jx3-bot-service/src/main/resources/config config
 # 设定时区
 ENV TZ=Asia/Shanghai
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime  \
