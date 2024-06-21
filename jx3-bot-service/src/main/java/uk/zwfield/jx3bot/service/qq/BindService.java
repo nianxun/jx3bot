@@ -9,6 +9,7 @@ import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import uk.zwfield.jx3bot.annotation.CheckGroupBind;
 import uk.zwfield.jx3bot.config.JXServerConfig;
 import uk.zwfield.jx3bot.entity.DataGroup;
 import uk.zwfield.jx3bot.service.DataGroupService;
@@ -57,14 +58,16 @@ public class BindService {
         bot.sendGroupMsg(groupId, msg.get(), false);
     }
 
+    @CheckGroupBind
     @GroupMessageHandler
-    @MessageHandlerFilter(cmd = "取消绑定")
+    @MessageHandlerFilter(cmd = "关闭所有推送")
     public void unbind(Bot bot, GroupMessageEvent event) {
         DataGroup dataGroup = dataGroupCache.get(event.getGroupId());
         if (dataGroup != null) {
-            dataGroupService.saveOrUpdate(dataGroup);
+            dataGroup.setBotSwitch("[]");
+            dataGroupService.save(dataGroup);
         }
-        bot.sendGroupMsg(event.getGroupId(), "取消绑定成功！所有功能已停用！", false);
+        bot.sendGroupMsg(event.getGroupId(), "取消绑定成功！推送功能已停用！", false);
     }
 
 }
