@@ -37,3 +37,4 @@ out/
 .vscode/
 /gradle/
 /LOG_HOME_IS_UNDEFINED/
+/jx3-bot-service/src/main/resources/config/api.yml
