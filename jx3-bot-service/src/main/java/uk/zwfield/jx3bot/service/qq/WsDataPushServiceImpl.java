@@ -7,6 +7,7 @@ import jx3api.api.ws.IWsDataPushService;
 import jx3api.api.ws.data.BaseWsData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import uk.zwfield.jx3bot.entity.DataGroup;
 import uk.zwfield.jx3bot.service.DataGroupService;
 
@@ -34,7 +35,7 @@ public class WsDataPushServiceImpl implements IWsDataPushService {
         if (!dataGroupList.isEmpty()) {
             dataGroupList.stream()
                     .filter(e -> e.getGroupNum() != null)
-                    .filter(e -> e.getServerName().equals(baseWsData.getServer()))
+                    .filter(e -> !StringUtils.hasText(baseWsData.getServer()) || e.getServerName().equals(baseWsData.getServer()))
                     .forEach(dataGroup -> {
                         Bot bot = botContainer.robots.get(dataGroup.getBotNum());
                         if (bot != null) {

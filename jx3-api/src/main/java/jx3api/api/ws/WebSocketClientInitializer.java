@@ -85,7 +85,7 @@ public class WebSocketClientInitializer {
     public void checkOnConnect() {
         synchronized (WebSocketClientInitializer.class) {
             int reConnectTime = 0;
-            while (reConnectTime < jx3WebSocketProperties.getReConnectMaxTimes()) {
+            while (jx3WebSocketProperties.getReConnectMaxTimes() == -1 || reConnectTime < jx3WebSocketProperties.getReConnectMaxTimes()) {
                 if (getConnectStatus()) {
                     return;
                 }
@@ -100,6 +100,13 @@ public class WebSocketClientInitializer {
                     logger.error("webSocket reConnect error，remote server url=>{}", jx3WebSocketProperties.getWsUrl(), e);
                 }
                 reConnectTime++;
+                // 等待一段时间再次尝试
+                try {
+                    //noinspection BusyWait
+                    Thread.sleep(jx3WebSocketProperties.getReConnectInterval() * 1000);
+                } catch (InterruptedException e) {
+                    logger.error("thread sleep error", e);
+                }
 
             }
         }

@@ -1,4 +1,4 @@
-FROM do.nark.eu.org/mdsol/java21-jdk:latest
+FROM mdsol/java21-jdk:latest
 LABEL authors="field"
 WORKDIR /home/bot
 EXPOSE 2333
