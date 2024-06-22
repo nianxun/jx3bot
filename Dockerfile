@@ -1,4 +1,4 @@
-FROM mdsol/java21-jdk:latest
+FROM swr.cn-east-3.myhuaweicloud.com/kubesre/docker.io/mdsol/java21-jdk:latest
 LABEL authors="field"
 WORKDIR /home/bot
 EXPOSE 2333
