@@ -31,9 +31,9 @@ public class WebSocketProperties {
     private Integer reConnectMaxTimes = 5000;
 
     /**
-     * 重新连接间隔时间，单位秒，如果为空，则默认5秒
+     * 重新连接间隔时间，单位秒，如果为空，则默认20秒
      */
-    private Integer reConnectInterval = 5;
+    private Integer reConnectInterval = 20;
     /**
      * ws数据解析默认包地址，可以为空
      */
