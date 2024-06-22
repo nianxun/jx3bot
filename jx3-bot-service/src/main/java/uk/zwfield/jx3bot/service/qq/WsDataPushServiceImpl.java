@@ -28,14 +28,16 @@ public class WsDataPushServiceImpl implements IWsDataPushService {
 
     @Override
     public void pushDataByWs(BaseWsData baseWsData) {
-        if(baseWsData == null) {
+        if (baseWsData == null) {
             return;
         }
         List<DataGroup> dataGroupList = dataGroupService.getListByAction(baseWsData.getAction());
         if (!dataGroupList.isEmpty()) {
             dataGroupList.stream()
                     .filter(e -> e.getGroupNum() != null)
-                    .filter(e -> !StringUtils.hasText(baseWsData.getServer()) || e.getServerName().equals(baseWsData.getServer()))
+                    .filter(e -> !StringUtils.hasText(baseWsData.getServer())
+                            || "-".equals(baseWsData.getServer())
+                            || e.getServerName().equals(baseWsData.getServer()))
                     .forEach(dataGroup -> {
                         Bot bot = botContainer.robots.get(dataGroup.getBotNum());
                         if (bot != null) {
