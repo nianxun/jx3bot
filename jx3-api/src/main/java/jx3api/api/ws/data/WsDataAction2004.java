@@ -32,6 +32,6 @@ public class WsDataAction2004 extends BaseWsData {
     private String date;
 
     public String getMsg() {
-        return String.format(subclass + "：" + title + "/r" + url + "/r" + date);
+        return String.format(subclass + "：" + title + "\n" + url + "\n" + date);
     }
 }
