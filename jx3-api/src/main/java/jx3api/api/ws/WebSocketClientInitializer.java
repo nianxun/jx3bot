@@ -12,6 +12,10 @@ import org.springframework.web.socket.client.standard.StandardWebSocketClient;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * webSocket服务类
@@ -42,7 +46,7 @@ public class WebSocketClientInitializer {
 
     private void connect() {
         beforeStartCheck();
-        checkOnConnect();
+        onConnect();
     }
 
     private void beforeStartCheck() {
@@ -82,34 +86,33 @@ public class WebSocketClientInitializer {
      * 异步校验连接状态，如果当前连接关闭，则尝试重连
      */
     @Async
-    public void checkOnConnect() {
+    public void onConnect() {
         synchronized (WebSocketClientInitializer.class) {
-            int reConnectTime = 0;
-            while (jx3WebSocketProperties.getReConnectMaxTimes() == -1 || reConnectTime < jx3WebSocketProperties.getReConnectMaxTimes()) {
-                if (getConnectStatus()) {
-                    return;
-                }
-                try {
-                    beforeStartCheck();
-                    webSocketConnectionManager.start();
-                    if (getConnectStatus()) {
-                        logger.info("webSocket reConnect success");
-                        return;
-                    }
-                } catch (Exception e) {
-                    logger.error("webSocket reConnect error，remote server url=>{}", jx3WebSocketProperties.getWsUrl(), e);
-                }
-                reConnectTime++;
-                // 等待一段时间再次尝试
-                try {
-                    //noinspection BusyWait
-                    Thread.sleep(jx3WebSocketProperties.getReConnectInterval() * 1000);
-                } catch (InterruptedException e) {
-                    logger.error("thread sleep error", e);
-                }
+            try {
+                beforeStartCheck();
+                webSocketConnectionManager.start();
 
+            } catch (Exception e) {
+                logger.error("webSocket reConnect error，remote server url=>{}", jx3WebSocketProperties.getWsUrl(), e);
             }
         }
+    }
+
+    public void reConnect() {
+        webSocketConnectionManager.stop();
+        webSocketConnectionManager = null;
+        final AtomicInteger reConnectTime = new AtomicInteger(0);
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(() -> {
+            if(webSocketHandler.isConnected){
+                executorService.shutdown();
+            }
+            if(jx3WebSocketProperties.getReConnectMaxTimes() != -1 && reConnectTime.get() >= jx3WebSocketProperties.getReConnectMaxTimes()){
+                executorService.shutdown();
+            }
+            onConnect();
+            reConnectTime.addAndGet(1);
+        }, 0, jx3WebSocketProperties.getReConnectInterval(), TimeUnit.SECONDS);
     }
 
     /**

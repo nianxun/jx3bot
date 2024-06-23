@@ -6,12 +6,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.PingMessage;
-import org.springframework.web.socket.PongMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
-import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -25,10 +23,10 @@ import java.util.concurrent.TimeUnit;
 
 public class CustomWebSocketHandler extends TextWebSocketHandler {
     private final Logger logger = LoggerFactory.getLogger(CustomWebSocketHandler.class);
-    private WebSocketClientInitializer webSocketClientInitializer;
-    private WsActionHandler wsActionHandler;
+    private final WebSocketClientInitializer webSocketClientInitializer;
+    private final WsActionHandler wsActionHandler;
     private WebSocketSession webSocketSession;
-    private ScheduledExecutorService executorService;
+    public volatile boolean isConnected = false;
 
     public CustomWebSocketHandler(WebSocketClientInitializer webSocketClientInitializer, IWsDataPushService iWsDataPushService) {
         this.webSocketClientInitializer = webSocketClientInitializer;
@@ -42,6 +40,7 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
         logger.info("WebSocket connect remote server success");
         this.webSocketSession = session;
         startPingTask();
+        this.isConnected = true;
     }
 
     @Override
@@ -54,22 +53,16 @@ public class CustomWebSocketHandler extends TextWebSocketHandler {
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);
         logger.error("WebSocket connection closed, try reConnect");
-        webSocketClientInitializer.checkOnConnect();
-    }
-
-    @Override
-    protected void handlePongMessage(WebSocketSession session, PongMessage message) throws Exception {
-        super.handlePongMessage(session, message);
-        logger.debug("Received Pong message.");
+        this.isConnected = false;
+        webSocketClientInitializer.reConnect();
     }
 
     /**
      * 发送ping消息
      *
-     * @throws IOException exception
      */
     private void startPingTask() {
-        executorService = Executors.newSingleThreadScheduledExecutor();
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
         executorService.scheduleAtFixedRate(this::sendPingMessage, 0, 5, TimeUnit.SECONDS);
     }
 
