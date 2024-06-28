@@ -19,7 +19,7 @@ public class WsDataAction2001 extends BaseWsData {
     @JsonProperty("status")
     private int status;
 
-    public String getStatus() {
+    public String getMsg() {
         return getServer() + (status == 1 ? " 开服" : " 关服");
     }
 }
