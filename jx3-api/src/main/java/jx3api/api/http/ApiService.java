@@ -114,7 +114,7 @@ public class ApiService {
         MethodEnum methodEnum = MethodEnum.DATA_SCHOOL_TOXIC;
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("name", name);
-        RequestResult requestResult = doPostRequest(methodEnum.getMethodPath(), params, MediaType.APPLICATION_FORM_URLENCODED);
+        RequestResult requestResult = doPostRequest(methodEnum.getMethodPath(), params);
         return OBJECT_MAPPER.convertValue(requestResult, SchoolToxicData.class);
     }
 
@@ -281,7 +281,7 @@ public class ApiService {
         MethodEnum methodEnum = MethodEnum.DATA_SERVER_CHECK;
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<String, Object>();
         params.add("server", server);
-        RequestResult requestResult = doPostRequest(methodEnum.getMethodPath(), params, MediaType.APPLICATION_FORM_URLENCODED);
+        RequestResult requestResult = doPostRequest(methodEnum.getMethodPath(), params);
         return getResultRealData(requestResult, methodEnum);
     }
 
@@ -523,7 +523,7 @@ public class ApiService {
      */
     public String luckAdventureView(Integer scale, String server, String name, Integer filter, String robot, String ticket) {
         MethodEnum methodEnum = MethodEnum.VIEW_LUCK_ADVENTURE;
-        MultiValueMap<String, Object> params = new LinkedMultiValueMap<String, Object>();
+        MultiValueMap<String, Object> params = new LinkedMultiValueMap<>();
         params.add("server", server);
         params.add("name", name);
         params.add("ticket", ticket);
@@ -1162,7 +1162,7 @@ public class ApiService {
      * @return 图片地址
      */
     public String serverSandView(Integer scale, String server, String robot, Integer cache, String desc) {
-        MethodEnum methodEnum = MethodEnum.DATA_SERVER_SAND;
+        MethodEnum methodEnum = MethodEnum.VIEW_SERVER_SAND;
         MultiValueMap<String, Object> params = new LinkedMultiValueMap<String, Object>();
         params.add("server", server);
         params.add("desc", desc);
@@ -1665,19 +1665,16 @@ public class ApiService {
      * @param path   请求地址
      * @param params 使用的参数
      * @return 返回内容
+     * @msg 原本的SDK中使用了可变参数，但是JX3API的接口并没有使用可变参数，所以这里直接使用了MultiValueMap.toSingleValueMap()
      */
     public RequestResult doPostRequest(String path, MultiValueMap<String, Object> params) {
-        return doPostRequest(path, params, MediaType.APPLICATION_JSON);
-    }
-
-    public RequestResult doPostRequest(String path, MultiValueMap<String, Object> params, MediaType contentType) {
         params.add("token", apiProperties.getApiToken());
         Mono<RequestResult> mono = this.webClient.method(HttpMethod.POST)
                 .uri(uriBuilder -> uriBuilder.path(path)
                         .build())
                 .accept(MediaType.APPLICATION_JSON)
-                .contentType(contentType)
-                .bodyValue(params)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(params.toSingleValueMap())
                 .retrieve()
                 .bodyToMono(RequestResult.class);
         return mono.block();
