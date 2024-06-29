@@ -37,7 +37,7 @@ public class FreeJX3APIService {
 
     @CheckGroupBind
     @GroupMessageHandler
-    @MessageHandlerFilter(cmd = "开服")
+    @MessageHandlerFilter(cmd = "^开服?$")
     public void checkServer(Bot bot, GroupMessageEvent event) {
         DataGroup dataGroup = dataGroupCache.get(event.getGroupId());
         ServerCheckData serverCheckData = apiService.serverCheck(dataGroup.getServerName());
@@ -45,7 +45,7 @@ public class FreeJX3APIService {
             bot.sendGroupMsg(event.getGroupId(), "服务器不存在", false);
             return;
         }
-        String msg = MessageFormat.format("服务器：{0}，开服状态：{1} ，时间：{2}",
+        String msg = MessageFormat.format("服务器：{0} \n开服状态：{1} \n时间：{2}",
                 serverCheckData.getServer(),
                 serverCheckData.getStatus() == 1 ? "已开服" : "维护中",
                 TimeUtils.timeFormatting(serverCheckData.getTime()));
@@ -54,7 +54,7 @@ public class FreeJX3APIService {
 
     @CheckGroupBind
     @GroupMessageHandler
-    @MessageHandlerFilter(cmd = "日常")
+    @MessageHandlerFilter(cmd = "^日常?$")
     public void activeCurrent(Bot bot, GroupMessageEvent event) {
         DataGroup dataGroup = dataGroupCache.get(event.getGroupId());
         String imgUrl = apiService.activeCurrentView(dataGroup.getServerName(), 0);
@@ -67,7 +67,7 @@ public class FreeJX3APIService {
     }
 
     @GroupMessageHandler
-    @MessageHandlerFilter(cmd = "公告")
+    @MessageHandlerFilter(cmd = "^公告?$")
     public void newsAnnounce(Bot bot, GroupMessageEvent event) {
         String imgUrl = apiService.newsAnnounceView();
         String msg = MsgUtils.builder().img(imgUrl).build();
@@ -75,7 +75,7 @@ public class FreeJX3APIService {
     }
 
     @GroupMessageHandler
-    @MessageHandlerFilter(cmd = "小药 (.*)")
+    @MessageHandlerFilter(cmd = "^小药\\s(\\S+)?$")
     public void schoolToxicData(Bot bot, GroupMessageEvent event, Matcher matcher) {
         String name = matcher.group(1);
         if (!StringUtils.hasText(name)) {
@@ -90,10 +90,7 @@ public class FreeJX3APIService {
         List<SchoolToxicData.DataDTO> data = schoolToxicData.getData();
         MsgUtils text = MsgUtils.builder()
                 .text("心法：" + name);
-        data.forEach(e -> {
-            text.text("\n" + e.getClassX() + ": " + e.getToxic());
-        });
-
+        data.forEach(e -> text.text("\n" + e.getClassX() + ": " + e.getToxic()));
         bot.sendGroupMsg(event.getGroupId(), text.build(), false);
     }
 }

@@ -10,7 +10,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import uk.zwfield.jx3bot.annotation.CheckGroupBind;
-import uk.zwfield.jx3bot.config.JXServerConfig;
+import uk.zwfield.jx3bot.config.JX3BotConfig;
 import uk.zwfield.jx3bot.entity.DataGroup;
 import uk.zwfield.jx3bot.service.DataGroupService;
 
@@ -35,13 +35,13 @@ public class BindService {
 
 
     @GroupMessageHandler
-    @MessageHandlerFilter(cmd = "绑定 (.*)")
+    @MessageHandlerFilter(cmd = "^绑定\\s(\\S+)?$")
     public void bind(Bot bot, GroupMessageEvent event, Matcher matcher) {
         String server = matcher.group(1);
         Long groupId = event.getGroupId();
         log.debug("绑定服务器：{}", server);
         AtomicReference<String> msg = new AtomicReference<>("服务器不存在！");
-        JXServerConfig.SERVER_MAP.forEach((k, v) -> {
+        JX3BotConfig.SERVER_MAP.forEach((k, v) -> {
             if (v.contains(server)) {
                 DataGroup dataGroup = dataGroupCache.get(groupId);
                 if (dataGroup == null) {
@@ -60,7 +60,7 @@ public class BindService {
 
     @CheckGroupBind
     @GroupMessageHandler
-    @MessageHandlerFilter(cmd = "关闭所有推送")
+    @MessageHandlerFilter(cmd = "^关闭所有推送?$")
     public void unbind(Bot bot, GroupMessageEvent event) {
         DataGroup dataGroup = dataGroupCache.get(event.getGroupId());
         if (dataGroup != null) {

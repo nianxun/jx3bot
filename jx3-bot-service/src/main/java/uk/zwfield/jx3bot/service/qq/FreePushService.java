@@ -45,7 +45,7 @@ public class FreePushService {
     @SneakyThrows
     @CheckGroupBind
     @GroupMessageHandler
-    @MessageHandlerFilter(cmd = "(开启|关闭) (.*)")
+    @MessageHandlerFilter(cmd = "^(开启|关闭)\\s(\\S+)?$")
     public void pushChange(Bot bot, GroupMessageEvent event, Matcher matcher) {
         DataGroup dataGroup = dataGroupCache.get(event.getGroupId());
         Set<Integer> actionList = new ObjectMapper().readValue(dataGroup.getBotSwitch(), new TypeReference<>() {
