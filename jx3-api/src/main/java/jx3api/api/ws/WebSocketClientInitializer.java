@@ -110,8 +110,11 @@ public class WebSocketClientInitializer {
             if(jx3WebSocketProperties.getReConnectMaxTimes() != -1 && reConnectTime.get() >= jx3WebSocketProperties.getReConnectMaxTimes()){
                 executorService.shutdown();
             }
-            onConnect();
-            reConnectTime.addAndGet(1);
+            try {
+                onConnect();
+                reConnectTime.addAndGet(1);
+            } catch (Exception ignored) {
+            }
         }, 0, jx3WebSocketProperties.getReConnectInterval(), TimeUnit.SECONDS);
     }
 
