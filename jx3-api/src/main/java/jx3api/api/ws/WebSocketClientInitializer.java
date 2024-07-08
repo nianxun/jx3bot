@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * webSocket服务类
@@ -37,8 +36,9 @@ public class WebSocketClientInitializer {
         connect();
         // 初始化ws推送事件中，序列化相关信息
         initWsActionData(jx3WebSocketProperties);
+        // 初始化ws连接检查器
+        initCheckConnect();
     }
-
     private void initWsActionData(WebSocketProperties jx3WebSocketProperties) throws ClassNotFoundException, InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
         WsActionDataManager wsActionDataManager = new WsActionDataManager();
         wsActionDataManager.init(jx3WebSocketProperties.getWsDataBeanBasePackage());
@@ -101,21 +101,6 @@ public class WebSocketClientInitializer {
     public void reConnect() {
         webSocketConnectionManager.stop();
         webSocketConnectionManager = null;
-        final AtomicInteger reConnectTime = new AtomicInteger(0);
-        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleAtFixedRate(() -> {
-            if(webSocketHandler.isConnected){
-                executorService.shutdown();
-            }
-            if(jx3WebSocketProperties.getReConnectMaxTimes() != -1 && reConnectTime.get() >= jx3WebSocketProperties.getReConnectMaxTimes()){
-                executorService.shutdown();
-            }
-            try {
-                onConnect();
-                reConnectTime.addAndGet(1);
-            } catch (Exception ignored) {
-            }
-        }, 0, jx3WebSocketProperties.getReConnectInterval(), TimeUnit.SECONDS);
     }
 
     /**
@@ -128,4 +113,22 @@ public class WebSocketClientInitializer {
             return webSocketConnectionManager.isConnected();
         }
     }
+
+
+    private void initCheckConnect() {
+        if (!jx3WebSocketProperties.getUnlimitedReconnection()) {
+            return;
+        }
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleAtFixedRate(() -> {
+            if (webSocketConnectionManager == null || !getConnectStatus() || !webSocketHandler.isConnected) {
+                try {
+                    connect();
+                } catch (Exception ignored) {
+                }
+
+            }
+        }, 0, jx3WebSocketProperties.getReConnectInterval(), TimeUnit.SECONDS);
+    }
+
 }

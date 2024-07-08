@@ -25,10 +25,9 @@ public class WebSocketProperties {
      */
     private String wsUrl;
     /**
-     * 重新连接次数.如果为空，则默认5000
-     * -1 无线重连
+     * 无线重连，默认true
      */
-    private Integer reConnectMaxTimes = 5000;
+    private Boolean unlimitedReconnection = true;
 
     /**
      * 重新连接间隔时间，单位秒，如果为空，则默认20秒
