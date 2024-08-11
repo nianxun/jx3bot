@@ -23,40 +23,43 @@ public class ServerSandData {
     @JsonProperty("reset")
     private Integer reset;
 
-    @JsonProperty("time")
-    private String time;
+    @JsonProperty("update")
+    private String update;
 
     @JsonProperty("data")
     private List<CastleInfo> data;
 
-    public void setTime(long time) {
-        this.time = TimeUtils.timeFormatting(time);
+    public void setUpdate(Long update) {
+        this.update =TimeUtils.timeFormatting(update);
     }
+
+    @Data
+    public static class CastleInfo {
+        @JsonProperty("tongId")
+        private Integer tongId;
+
+        @JsonProperty("tongName")
+        private String tongName;
+
+        @JsonProperty("castleId")
+        private Integer castleId;
+
+        @JsonProperty("castleName")
+        private String castleName;
+
+        @JsonProperty("masterId")
+        private Integer masterId;
+
+        @JsonProperty("masterName")
+        private String masterName;
+
+        @JsonProperty("campId")
+        private Integer campId;
+
+        @JsonProperty("campName")
+        private String campName;
+    }
+
+
 }
 
-@Data
-class CastleInfo {
-    @JsonProperty("tongId")
-    private Integer tongId;
-
-    @JsonProperty("tongName")
-    private String tongName;
-
-    @JsonProperty("castleId")
-    private Integer castleId;
-
-    @JsonProperty("castleName")
-    private String castleName;
-
-    @JsonProperty("masterId")
-    private Integer masterId;
-
-    @JsonProperty("masterName")
-    private String masterName;
-
-    @JsonProperty("campId")
-    private Integer campId;
-
-    @JsonProperty("campName")
-    private String campName;
-}

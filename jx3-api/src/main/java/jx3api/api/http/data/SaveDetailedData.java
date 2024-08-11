@@ -14,52 +14,52 @@ public class SaveDetailedData {
     @JsonProperty("id")
     private Integer id;
 
-    @JsonProperty("zone_name")
+    @JsonProperty("zoneName")
     private String zoneName;
 
-    @JsonProperty("server_name")
+    @JsonProperty("serverName")
     private String serverName;
 
-    @JsonProperty("role_name")
+    @JsonProperty("roleName")
     private String roleName;
 
-    @JsonProperty("role_id")
+    @JsonProperty("roleId")
     private String roleId;
 
-    @JsonProperty("global_role_id")
+    @JsonProperty("globalRoleId")
     private String globalRoleId;
 
-    @JsonProperty("force_name")
+    @JsonProperty("forceName")
     private String forceName;
 
-    @JsonProperty("force_id")
+    @JsonProperty("forceId")
     private String forceId;
 
-    @JsonProperty("body_name")
+    @JsonProperty("bodyName")
     private String bodyName;
 
-    @JsonProperty("body_id")
+    @JsonProperty("bodyId")
     private String bodyId;
 
-    @JsonProperty("camp_name")
+    @JsonProperty("campName")
     private String campName;
 
-    @JsonProperty("camp_id")
+    @JsonProperty("campId")
     private String campId;
 
-    @JsonProperty("tong_name")
+    @JsonProperty("tongName")
     private String tongName;
 
-    @JsonProperty("tong_id")
+    @JsonProperty("tongId")
     private String tongId;
 
-    @JsonProperty("person_name")
+    @JsonProperty("personName")
     private String personName;
 
-    @JsonProperty("person_id")
+    @JsonProperty("personId")
     private String personId;
 
-    @JsonProperty("person_avatar")
+    @JsonProperty("personAvatar")
     private String personAvatar;
 
     @JsonProperty("source")

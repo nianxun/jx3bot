@@ -5,8 +5,8 @@ import jx3api.api.http.ApiService;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 
 /**
@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Configuration;
  * @author Grafie
  * @since 1.0.0
  */
-@ConditionalOnClass(value = EnableJX3ApiHttp.class)
 @Configuration
+@Conditional(OnEnableJX3ApiHttpCondition.class)
 public class JX3ApiHttpAutoConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(JX3ApiHttpAutoConfiguration.class);

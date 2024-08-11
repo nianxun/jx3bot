@@ -12,12 +12,12 @@ import lombok.Data;
 @Data
 public class WebNewsAnnounceData {
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
 
-    @JsonProperty("value")
-    private Integer value;
+    @JsonProperty("token")
+    private Long token;
 
-    @JsonProperty("type")
+    @JsonProperty("class")
     private String type;
 
     @JsonProperty("title")

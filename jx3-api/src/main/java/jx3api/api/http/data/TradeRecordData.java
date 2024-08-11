@@ -3,6 +3,8 @@ package jx3api.api.http.data;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * 物品价格
  *
@@ -45,13 +47,13 @@ public class TradeRecordData {
     private String date;
 
     @JsonProperty("data")
-    private HairSaleData[] data;
+    private List<List<HairSaleData>> data;
 }
 
 @Data
 class HairSaleData {
     @JsonProperty("id")
-    private Integer id;
+    private Long id;
 
     @JsonProperty("index")
     private Integer index;

@@ -1,6 +1,7 @@
 package jx3api.api.http.data;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jx3api.api.util.TimeUtils;
 import lombok.Data;
 
 /**
@@ -23,5 +24,9 @@ public class ServerCheckData {
     private Integer status;
 
     @JsonProperty("time")
-    private Long time;
+    public String time;
+
+    public void setTime(Long time) {
+        this.time = TimeUtils.timeFormatting(time);
+    }
 }

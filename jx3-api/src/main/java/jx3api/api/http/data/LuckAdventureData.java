@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jx3api.api.util.TimeUtils;
 import lombok.Data;
 
+import java.time.Duration;
+import java.time.Instant;
+
 /**
  * 奇遇记录
  *
@@ -12,6 +15,10 @@ import lombok.Data;
  */
 @Data
 public class LuckAdventureData {
+
+    @JsonProperty("zone")
+    private String zone;
+
     @JsonProperty("server")
     private String server;
 
@@ -31,9 +38,18 @@ public class LuckAdventureData {
     private Integer status;
 
     @JsonProperty("time")
-    private String time;
+    private Long time;
+
+    private String timeStr;
+
+    private String durationStr;
+
+
 
     public void setTime(long time) {
-        this.time = TimeUtils.timeFormatting(time);
+        this.time = time;
+        this.timeStr = time == 0 ? "未知" : TimeUtils.timeFormatting(time);
+        // 计算时间间隔
+        this.durationStr = time == 0 ? "未知" : Duration.between(Instant.ofEpochSecond(time), Instant.now()).toDays() + " 天前";
     }
 }

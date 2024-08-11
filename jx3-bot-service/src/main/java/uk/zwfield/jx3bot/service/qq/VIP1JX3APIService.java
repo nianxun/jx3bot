@@ -5,17 +5,30 @@ import com.mikuac.shiro.annotation.GroupMessageHandler;
 import com.mikuac.shiro.annotation.MessageHandlerFilter;
 import com.mikuac.shiro.annotation.common.Shiro;
 import com.mikuac.shiro.common.utils.MsgUtils;
+import com.mikuac.shiro.common.utils.ShiroUtils;
 import com.mikuac.shiro.core.Bot;
 import com.mikuac.shiro.dto.event.message.GroupMessageEvent;
+import freemarker.template.TemplateException;
 import jakarta.annotation.Resource;
 import jx3api.api.config.ApiProperties;
 import jx3api.api.http.ApiService;
+import jx3api.api.http.data.LuckAdventureData;
+import jx3api.api.http.data.RoleAttributeData;
+import jx3api.api.http.data.ServerSandData;
+import jx3api.api.http.data.TradeDemonData;
+import jx3api.api.http.data.TradeRecordData;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
+import org.xml.sax.SAXException;
 import uk.zwfield.jx3bot.config.JX3BotConfig;
 import uk.zwfield.jx3bot.entity.DataGroup;
 import uk.zwfield.jx3bot.exception.BotException;
+import uk.zwfield.jx3bot.utils.HTML2PNGUtil;
 
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -46,14 +59,16 @@ public class VIP1JX3APIService {
         try {
             String serverName = getMatcherServerName(matcher, event.getGroupId());
             MsgUtils text = MsgUtils.builder();
-            String url = apiService.luckAdventureView(serverName, name, apiProperties.getTicket());
-            if (StringUtils.hasText(url)) {
-                text.img(url);
+            List<LuckAdventureData> luckAdventureDataList = apiService.luckAdventure(serverName, name, apiProperties.getTicket()).getData();
+            if (!CollectionUtils.isEmpty(luckAdventureDataList)) {
+                // 合成图片
+                text.img("base64://" + HTML2PNGUtil.luckAdventure(serverName, name, luckAdventureDataList));
             } else {
                 text.text("查询失败");
             }
             bot.sendGroupMsg(event.getGroupId(), text.build(), false);
-        } catch (BotException e) {
+        } catch (BotException | IOException | TemplateException | ParserConfigurationException | SAXException |
+                 URISyntaxException e) {
             bot.sendGroupMsg(event.getGroupId(), e.getMessage(), false);
         }
     }
@@ -70,14 +85,15 @@ public class VIP1JX3APIService {
         try {
             String serverName = getMatcherServerName(matcher, event.getGroupId());
             MsgUtils text = MsgUtils.builder();
-            String url = apiService.roleAttributeView(serverName, name, apiProperties.getTicket());
-            if (StringUtils.hasText(url)) {
-                text.img(url);
+            RoleAttributeData roleAttributeData = apiService.roleAttribute(serverName, name, apiProperties.getTicket()).getData();
+            if (roleAttributeData != null) {
+                // 合成图片
+                text.img("base64://" + HTML2PNGUtil.roleAttribute(roleAttributeData));
             } else {
                 text.text("查询失败");
             }
             bot.sendGroupMsg(event.getGroupId(), text.build(), false);
-        } catch (BotException e) {
+        } catch (BotException | IOException | TemplateException | URISyntaxException e) {
             bot.sendGroupMsg(event.getGroupId(), e.getMessage(), false);
         }
     }
@@ -90,14 +106,19 @@ public class VIP1JX3APIService {
             bot.sendGroupMsg(event.getGroupId(), "请输入物品名称！", false);
             return;
         }
-        MsgUtils text = MsgUtils.builder();
-        String url = apiService.tradeRecordView(name);
-        if (StringUtils.hasText(url)) {
-            text.img(url);
-        } else {
-            text.text("查询失败");
+        try {
+            MsgUtils text = MsgUtils.builder();
+            TradeRecordData tradeRecordData = apiService.tradeRecord(name).getData();
+            if (tradeRecordData != null) {
+                // 合成图片
+                text.img("base64://" + HTML2PNGUtil.tradeRecord(tradeRecordData));
+            } else {
+                text.text("查询失败");
+            }
+            bot.sendGroupMsg(event.getGroupId(), text.build(), false);
+        } catch (IOException | TemplateException | URISyntaxException e) {
+            bot.sendGroupMsg(event.getGroupId(), e.getMessage(), false);
         }
-        bot.sendGroupMsg(event.getGroupId(), text.build(), false);
     }
 
     @GroupMessageHandler
@@ -106,14 +127,15 @@ public class VIP1JX3APIService {
         try {
             String serverName = getMatcherServerName(matcher, event.getGroupId());
             MsgUtils text = MsgUtils.builder();
-            String url = apiService.serverSandView(serverName);
-            if (StringUtils.hasText(url)) {
-                text.img(url);
+            ServerSandData sandData = apiService.serverSand(serverName).getData();
+            if (sandData != null) {
+                // 合成图片
+                text.img("base64://" + HTML2PNGUtil.serverSand(sandData));
             } else {
                 text.text("查询失败");
             }
             bot.sendGroupMsg(event.getGroupId(), text.build(), false);
-        } catch (BotException e) {
+        } catch (BotException | IOException | TemplateException | URISyntaxException e) {
             bot.sendGroupMsg(event.getGroupId(), e.getMessage(), false);
         }
     }
@@ -123,14 +145,19 @@ public class VIP1JX3APIService {
     public void tradeDemon(Bot bot, GroupMessageEvent event, Matcher matcher) {
         try {
             String serverName = getMatcherServerName(matcher, event.getGroupId());
-            MsgUtils text = MsgUtils.builder();
-            String url = apiService.tradeDemonView(serverName);
-            if (StringUtils.hasText(url)) {
-                text.img(url);
-            } else {
-                text.text("查询失败");
+            List<TradeDemonData> demonDataList = apiService.tradeDemon(serverName, 5).getData();
+            if (!CollectionUtils.isEmpty(demonDataList)) {
+                List<String> list = demonDataList.stream().map(e ->
+                        "万宝楼：" + e.getWanbaolou() + "\n" +
+                                "贴吧：" + e.getTieba() + "\n" +
+                                "5173：" + e.getFive173() + "\n" +
+                                "7881：" + e.getSeven881() + "\n" +
+                                "dd373：" + e.getDd373() + "\n" +
+                                "uu898：" + e.getUu898() + "\n" +
+                                "日期：" + e.getDate()).toList();
+                List<Map<String, Object>> forwardMsg = ShiroUtils.generateForwardMsg(bot.getSelfId(), "金价", list);
+                bot.sendGroupForwardMsg(event.getGroupId(), forwardMsg);
             }
-            bot.sendGroupMsg(event.getGroupId(), text.build(), false);
         } catch (BotException e) {
             bot.sendGroupMsg(event.getGroupId(), e.getMessage(), false);
         }
@@ -144,7 +171,7 @@ public class VIP1JX3APIService {
             bot.sendGroupMsg(event.getGroupId(), "请输入奇遇名称！", false);
             return;
         }
-        if(!JX3BotConfig.LUCK_MAP.containsKey(name)){
+        if (!JX3BotConfig.LUCK_MAP.containsKey(name)) {
             bot.sendGroupMsg(event.getGroupId(), "无法找到此攻略！", false);
             return;
         }
@@ -182,6 +209,5 @@ public class VIP1JX3APIService {
         }
         return serverName;
     }
-
 
 }

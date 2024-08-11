@@ -20,12 +20,13 @@ dependencies {
     implementation 'com.github.ben-manes.caffeine:caffeine'
     implementation 'com.baomidou:mybatis-plus-boot-starter:3.5.7'
     implementation 'com.baomidou:mybatis-plus-generator:3.5.7'
-    implementation 'org.freemarker:freemarker:2.3.31'
+    implementation 'org.freemarker:freemarker:2.3.33'
     implementation 'org.xerial:sqlite-jdbc:3.46.0.0'
     compileOnly 'org.projectlombok:lombok'
     annotationProcessor 'org.projectlombok:lombok'
     implementation 'com.mikuac:shiro:2.2.8'
-    implementation 'cn.hutool:hutool-all:5.8.28'
+    implementation 'org.seleniumhq.selenium:selenium-java:4.23.0'
+    implementation 'io.github.bonigarcia:webdrivermanager:5.9.2'
 }
 
 bootJar {
