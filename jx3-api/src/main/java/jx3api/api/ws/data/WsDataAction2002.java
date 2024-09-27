@@ -20,7 +20,7 @@ import lombok.ToString;
 public class WsDataAction2002 extends BaseWsData {
 
 
-    @JsonProperty("type")
+    @JsonProperty("class")
     private String type;
     @JsonProperty("title")
     private String title;
