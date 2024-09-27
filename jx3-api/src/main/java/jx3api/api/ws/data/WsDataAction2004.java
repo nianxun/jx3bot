@@ -16,7 +16,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 @WsActionData(actionCode = 2004)
 public class WsDataAction2004 extends BaseWsData {
-    @JsonProperty("subclass")
+    @JsonProperty("class")
     private String subclass;
 
     @JsonProperty("name")
